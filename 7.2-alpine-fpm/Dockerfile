@@ -92,6 +92,11 @@ RUN set -ex \
             echo "#!/bin/sh"; \
 	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/php-fpm.d/www.conf"; \
 	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/conf.d/99-overrides.ini"; \
+	    echo "for script in /var/www/docker/init_*.sh ; do"; \
+	    echo "  if [ -r \$script ] ; then"; \
+	    echo "    . \$script"; \
+	    echo "  fi"; \
+	    echo "done"; \
             echo "nginx -g 'daemon on;'"; \
             echo "php-fpm7 -F"; \
         } | tee /run.sh \
