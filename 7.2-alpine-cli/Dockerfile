@@ -19,7 +19,7 @@ LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 
 ENV HIREDIS_VERSION=0.13.3 \
     # PHALCON_VERSION=3.3.2 \
-    SWOOLE_VERSION=4.2.5 \
+    SWOOLE_VERSION=4.2.7 \
     MONGO_VERSION=1.5.3 \
     #  install and remove building packages
     PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make php7-dev php7-pear pkgconf re2c pcre-dev zlib-dev"
