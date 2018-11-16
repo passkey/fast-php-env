@@ -79,6 +79,7 @@ RUN set -ex \
         php7-tokenizer \
         php7-zip \
         php7-zlib \
+	php7-gd \
         && apk del --purge *-dev \
         && rm -rf /var/cache/apk/* /tmp/* /usr/share/man /usr/share/php7 \
         #  ---------- some config,clear work ----------
