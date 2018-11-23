@@ -29,7 +29,7 @@ RUN set -ex \
 	&& sed -i -e "s#\worker_connections 1024;#use epoll;\n\tworker_connections 65535;#" nginx.conf \
         && { \
             echo "location ~ .php {"; \
-            echo "  fastcgi_pass   unix:/var/run/php-fpm.sock;"; \
+            echo "  fastcgi_pass   127.0.0.1:9000;"; \
             echo "  fastcgi_index  index.php;"; \
             echo "  fastcgi_split_path_info ^((?U).+.php)(/?.+)$;"; \
             echo "  fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;"; \
@@ -56,10 +56,7 @@ RUN set -ex \
             echo "pid = /var/run/php-fpm.pid"; \
             echo "error_log = /var/log/php7/php-fpm.log"; \
             echo "[www]"; \
-            echo "listen.owner = www-data"; \
-            echo "listen.group = www-data"; \
-            echo "listen.mode = 0666"; \
-            echo "listen = /var/run/php-fpm.sock"; \
+            echo "listen = 0.0.0.0:9000"; \
             echo "user = www-data"; \
             echo "group = www-data"; \
             echo "pm = dynamic"; \
