@@ -26,6 +26,7 @@ RUN set -ex \
         && rm -rf /var/cache/apk/* /tmp/* /usr/share/man /usr/share/php7 \
         # - config nginx
 	&& cd /etc/nginx \
+	&& sed -i -e "s#\user nginx;#user root;#" nginx.conf \
 	&& sed -i -e "s#\worker_connections 1024;#use epoll;\n\tworker_connections 65535;#" nginx.conf \
         && { \
             echo "location ~ .php {"; \
@@ -57,13 +58,13 @@ RUN set -ex \
             echo "error_log = /var/log/php7/php-fpm.log"; \
             echo "[www]"; \
             echo "listen = 0.0.0.0:9000"; \
-            echo "user = www-data"; \
-            echo "group = www-data"; \
+            echo "user = root"; \
+            echo "group = root"; \
             echo "pm = dynamic"; \
-            echo "pm.max_children = 100"; \
-            echo "pm.start_servers = 25"; \
-            echo "pm.min_spare_servers = 10"; \
-            echo "pm.max_spare_servers = 25"; \
+            echo "pm.max_children = 200"; \
+            echo "pm.start_servers = 50"; \
+            echo "pm.min_spare_servers = 20"; \
+            echo "pm.max_spare_servers = 50"; \
             echo "request_slowlog_timeout = 3"; \
             echo "slowlog = /var/log/php7/slow.log"; \
             echo "rlimit_files = 51200"; \
@@ -84,7 +85,6 @@ RUN set -ex \
         } | tee -a conf.d/99-overrides.ini \
         # - config site
 	&& echo "<?php phpinfo();?>" > /var/www/index.php \
-        && chown -R www-data:www-data /var/www \
         && { \
             echo "#!/bin/sh"; \
 	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/php-fpm.d/www.conf"; \
@@ -95,7 +95,7 @@ RUN set -ex \
 	    echo "  fi"; \
 	    echo "done"; \
             echo "nginx -g 'daemon on;'"; \
-            echo "php-fpm7 -F"; \
+            echo "php-fpm7 -R -F"; \
         } | tee /run.sh \
         && chmod 755 /run.sh \
         && echo -e "\033[42;37m Build Completed :).\033[0m\n"

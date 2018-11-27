@@ -22,8 +22,6 @@ LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 ARG timezone
 # prod grey test dev
 ARG app_env=prod
-# default use www-data user
-ARG add_user=www-data
 
 ENV APP_ENV=${app_env:-"prod"} \
     TIMEZONE=${timezone:-"Asia/Shanghai"}
@@ -94,13 +92,6 @@ RUN set -ex \
         # - config timezone
         && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
         && echo "${TIMEZONE}" > /etc/timezone \
-        # ---------- some config work ----------
-        # - ensure 'www-data' user exists(82 is the standard uid/gid for "www-data" in Alpine)
-        && addgroup -g 82 -S ${add_user} \
-        && adduser -u 82 -D -S -G ${add_user} ${add_user} \
-        # - create user dir
-        && mkdir -p /data \
-        && chown -R ${add_user}:${add_user} /data \
         && echo -e "\033[42;37m Build Completed :).\033[0m\n"
 
 WORKDIR /var/www
