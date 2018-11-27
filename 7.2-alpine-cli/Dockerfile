@@ -17,9 +17,7 @@ LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 # ---------- env settings ----------
 ##
 
-ENV HIREDIS_VERSION=0.13.3 \
-    # PHALCON_VERSION=3.3.2 \
-    SWOOLE_VERSION=4.2.7 \
+ENV SWOOLE_VERSION=4.2.7 \
     MONGO_VERSION=1.5.3 \
     #  install and remove building packages
     PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make php7-dev php7-pear pkgconf re2c pcre-dev zlib-dev"
@@ -48,11 +46,6 @@ RUN set -ex \
         && pecl install mongodb.tgz \
         # && pecl install mongodb \
         && echo "extension=mongodb.so" > /etc/php7/conf.d/20_mongodb.ini \
-        # hiredis - redis C client, provide async operate support for Swoole
-        && cd /tmp \
-        && tar -zxvf hiredis.tar.gz \
-        && cd hiredis-${HIREDIS_VERSION} \
-        && make -j && make install \
         # php extension: swoole
         && cd /tmp \
         && mkdir -p swoole \
@@ -61,7 +54,7 @@ RUN set -ex \
         && ( \
             cd swoole \
             && phpize \
-            && ./configure --enable-async-redis --enable-mysqlnd --enable-openssl \
+            && ./configure --enable-mysqlnd --enable-openssl \
             && make -j$(nproc) && make install \
         ) \
         && rm -r swoole \
