@@ -54,11 +54,13 @@ RUN set -ex \
         php7-ctype \
         php7-dom \
         php7-fileinfo \	
-        php7-gd \
         # php7-gettext \
+        php7-gd \
         php7-iconv \
+	# php7-imagick \
         php7-json \
         php7-mbstring \
+	php7-mongodb \
         php7-mysqlnd \
         php7-mysqli \
         php7-openssl \
@@ -73,11 +75,12 @@ RUN set -ex \
         php7-sockets \
         php7-sodium \
         # php7-sqlite \
-        php7-session \
+        # php7-session \
         php7-sysvshm \
         php7-sysvmsg \
         php7-sysvsem \
         php7-tokenizer \
+	php7-xml \
         php7-zip \
         php7-zlib \
         && apk del --purge *-dev \

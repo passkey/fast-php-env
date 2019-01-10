@@ -17,8 +17,7 @@ LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 # ---------- env settings ----------
 ##
 
-ENV SWOOLE_VERSION=4.2.11 \
-    MONGO_VERSION=1.5.3 \
+ENV SWOOLE_VERSION=4.2.12 \
     #  install and remove building packages
     PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make php7-dev php7-pear pkgconf re2c pcre-dev zlib-dev"
 
@@ -26,28 +25,15 @@ ENV SWOOLE_VERSION=4.2.11 \
 # install php extensions
 ##
 
-# 可以选择事先下载好
-# COPY deps/hiredis-${HIREDIS_VERSION}.tar.gz hiredis.tar.gz
-# COPY deps/swoole-${SWOOLE_VERSION}.tar.gz swoole.tgz
-# COPY deps/mongodb-${MONGO_VERSION}.tgz mongodb.tgz
 RUN set -ex \
-        && cd /tmp \
-        && curl -SL "https://github.com/redis/hiredis/archive/v${HIREDIS_VERSION}.tar.gz" -o hiredis.tar.gz \
-        # && curl -SL "https://github.com/swoole/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz" -o swoole.tgz \
-	&& curl -SL "http://pecl.php.net/get/swoole-${SWOOLE_VERSION}.tgz" -o swoole.tgz \
-        # && curl -SL "https://github.com/mongodb/mongo-php-driver/archive/v${MONGO_VERSION}.tgz" -o mongodb.tgz \
-        && curl -SL "http://pecl.php.net/get/mongodb-${MONGO_VERSION}.tgz" -o mongodb.tgz \
-        && ls -alh \
         && apk update \
-        # for swoole extension libaio linux-headers
+        # libs for swoole extension. libaio linux-headers
         && apk add --no-cache libstdc++ openssl \
         && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev inotify-tools \
-        # php extension: mongodb
-        && pecl install mongodb.tgz \
-        # && pecl install mongodb \
-        && echo "extension=mongodb.so" > /etc/php7/conf.d/20_mongodb.ini \
         # php extension: swoole
         && cd /tmp \
+        # && curl -SL "https://github.com/swoole/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz" -o swoole.tgz \
+        && curl -SL "http://pecl.php.net/get/swoole-${SWOOLE_VERSION}.tgz" -o swoole.tgz \
         && mkdir -p swoole \
         && tar -xf swoole.tgz -C swoole --strip-components=1 \
         && rm swoole.tgz \

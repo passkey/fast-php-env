@@ -21,13 +21,13 @@ RUN set -ex \
         # change apk source repo
         && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/' /etc/apk/repositories \
         && apk update \
-        && apk add --no-cache php7-fpm php7-pcntl php7-opcache nginx \
+        && apk add --no-cache php7-fpm php7-pcntl php7-opcache php7-session nginx \
         && apk del --purge *-dev \
         && rm -rf /var/cache/apk/* /tmp/* /usr/share/man /usr/share/php7 \
         # - config nginx
-	&& cd /etc/nginx \
-	&& sed -i -e "s#\user nginx;#user root;#" nginx.conf \
-	&& sed -i -e "s#\worker_connections 1024;#use epoll;\n\tworker_connections 65535;#" nginx.conf \
+        && cd /etc/nginx \
+        && sed -i -e "s#\user nginx;#user root;#" nginx.conf \
+        && sed -i -e "s#\worker_connections 1024;#use epoll;\n\tworker_connections 65535;#" nginx.conf \
         && { \
             echo "location ~ .php {"; \
             echo "  fastcgi_pass   127.0.0.1:9000;"; \
@@ -39,7 +39,7 @@ RUN set -ex \
             echo "  include        fastcgi_params;"; \
             echo "}"; \
         } | tee fastcgi_php.conf \
-	&& { \
+        && { \
             echo "server {"; \
             echo "  listen       80;"; \
             echo "  server_name  localhost;"; \
@@ -72,7 +72,7 @@ RUN set -ex \
             echo "catch_workers_output = yes"; \
             echo "env[APP_ENV] = _APP_ENV_"; \
         } | tee php-fpm.d/www.conf \
-	&& { \
+        && { \
             echo "expose_php = off"; \
             echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE"; \
             echo "[opcache]"; \
@@ -84,7 +84,7 @@ RUN set -ex \
             echo "APP_ENV = _APP_ENV_"; \
         } | tee -a conf.d/99-overrides.ini \
         # - config site
-	&& echo "<?php phpinfo();?>" > /var/www/index.php \
+        && echo "<?php phpinfo();?>" > /var/www/index.php \
         && { \
             echo "#!/bin/sh"; \
 	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/php-fpm.d/www.conf"; \
