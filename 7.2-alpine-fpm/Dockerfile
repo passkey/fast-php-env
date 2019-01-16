@@ -56,15 +56,22 @@ RUN set -ex \
             echo "[global]"; \
             echo "pid = /var/run/php-fpm.pid"; \
             echo "error_log = /var/log/php7/php-fpm.log"; \
+	    echo "emergency_restart_threshold = 30"; \
+	    echo "emergency_restart_interval = 60s"; \
+	    echo "process_control_timeout = 5s"; \
+	    echo "daemonize = yes"; \
             echo "[www]"; \
             echo "listen = 0.0.0.0:9000"; \
             echo "user = root"; \
             echo "group = root"; \
             echo "pm = dynamic"; \
             echo "pm.max_children = 200"; \
-            echo "pm.start_servers = 50"; \
+            echo "pm.start_servers = 30"; \
             echo "pm.min_spare_servers = 20"; \
             echo "pm.max_spare_servers = 50"; \
+	    echo ";pm.max_requests = 20480"; \
+	    echo ";pm.process_idle_timeout = 10s"; \
+	    echo ";request_terminate_timeout = 120"; \
             echo "request_slowlog_timeout = 3"; \
             echo "slowlog = /var/log/php7/slow.log"; \
             echo "rlimit_files = 51200"; \
