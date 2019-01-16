@@ -107,7 +107,8 @@ RUN set -ex \
         && sed -i 's#ServerRoot /var/www#ServerRoot /var/apache2#' /etc/apache2/httpd.conf \
         && sed -i 's#^DocumentRoot ".*#DocumentRoot "/var/www"#g' /etc/apache2/httpd.conf \
         && sed -i 's#^<Directory "/var/www/localhost/htdocs">*#<Directory "/var/www">#g' /etc/apache2/httpd.conf \
-        && sed -i 's#AllowOverride none#AllowOverride All#' /etc/apache2/httpd.conf \
+        && sed -i 's#AllowOverride .*one#AllowOverride All#' /etc/apache2/httpd.conf \
+        && sed -i 's/^#\(LoadModule rewrite_module\)/\1/' /etc/apache2/httpd.conf \
         && mv /var/www /var/apache2 \
         && mkdir -p /run/apache2 /var/www \
         # - optimize apache
