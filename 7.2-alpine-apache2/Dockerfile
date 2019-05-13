@@ -11,7 +11,7 @@
 #                docker exec -it tapache /bin/sh
 # ------------------------------------------------------------------------------------
 
-FROM alpine:3.8
+FROM alpine:3.9
 LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 
 ##

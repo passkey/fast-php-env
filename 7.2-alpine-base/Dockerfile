@@ -11,7 +11,7 @@
 #                docker exec -it tbase /bin/sh
 # ------------------------------------------------------------------------------------
 
-FROM alpine:3.8
+FROM alpine:3.9
 LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 
 ##
@@ -57,10 +57,10 @@ RUN set -ex \
         # php7-gettext \
         php7-gd \
         php7-iconv \
-	# php7-imagick \
+        # php7-imagick \
         php7-json \
         php7-mbstring \
-	php7-mongodb \
+        php7-mongodb \
         php7-mysqlnd \
         php7-mysqli \
         php7-openssl \
@@ -80,7 +80,7 @@ RUN set -ex \
         php7-sysvmsg \
         php7-sysvsem \
         php7-tokenizer \
-	php7-xml \
+        php7-xml \
         php7-zip \
         php7-zlib \
         && apk del --purge *-dev \
