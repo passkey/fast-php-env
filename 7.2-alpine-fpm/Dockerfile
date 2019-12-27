@@ -30,7 +30,7 @@ RUN set -ex \
         && sed -i -e "s#\worker_connections 1024;#use epoll;\n\tworker_connections 65535;#" nginx.conf \
         && { \
             echo "location ~ .php {"; \
-            echo "  fastcgi_pass   127.0.0.1:9000;"; \
+            echo "  fastcgi_pass   unix:/dev/shm/php-fpm.sock;"; \
             echo "  fastcgi_index  index.php;"; \
             echo "  fastcgi_split_path_info ^((?U).+.php)(/?.+)$;"; \
             echo "  fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;"; \
@@ -56,12 +56,15 @@ RUN set -ex \
             echo "[global]"; \
             echo "pid = /var/run/php-fpm.pid"; \
             echo "error_log = /var/log/php7/php-fpm.log"; \
-	    echo "emergency_restart_threshold = 30"; \
-	    echo "emergency_restart_interval = 60s"; \
-	    echo "process_control_timeout = 5s"; \
-	    echo "daemonize = yes"; \
+            echo "emergency_restart_threshold = 30"; \
+            echo "emergency_restart_interval = 60s"; \
+            echo "process_control_timeout = 5s"; \
+            echo "daemonize = yes"; \
             echo "[www]"; \
-            echo "listen = 0.0.0.0:9000"; \
+            echo "listen.owner = root"; \
+            echo "listen.group = root"; \
+            echo "listen.mode = 0666"; \
+            echo "listen = /dev/shm/php-fpm.sock"; \
             echo "user = root"; \
             echo "group = root"; \
             echo "pm = dynamic"; \
@@ -69,9 +72,9 @@ RUN set -ex \
             echo "pm.start_servers = 30"; \
             echo "pm.min_spare_servers = 20"; \
             echo "pm.max_spare_servers = 50"; \
-	    echo ";pm.max_requests = 20480"; \
-	    echo ";pm.process_idle_timeout = 10s"; \
-	    echo ";request_terminate_timeout = 120"; \
+            echo ";pm.max_requests = 20480"; \
+            echo ";pm.process_idle_timeout = 10s"; \
+            echo ";request_terminate_timeout = 120"; \
             echo "request_slowlog_timeout = 3"; \
             echo "slowlog = /var/log/php7/slow.log"; \
             echo "rlimit_files = 51200"; \
@@ -94,13 +97,13 @@ RUN set -ex \
         && echo "<?php phpinfo();?>" > /var/www/index.php \
         && { \
             echo "#!/bin/sh"; \
-	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/php-fpm.d/www.conf"; \
-	    echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/conf.d/99-overrides.ini"; \
-	    echo "for script in /var/www/docker/init_*.sh ; do"; \
-	    echo "  if [ -r \$script ] ; then"; \
-	    echo "    . \$script"; \
-	    echo "  fi"; \
-	    echo "done"; \
+            echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/php-fpm.d/www.conf"; \
+            echo "sed -i -e \"s#_APP_ENV_#\${APP_ENV}#\" /etc/php7/conf.d/99-overrides.ini"; \
+            echo "for script in /var/www/docker/init_*.sh ; do"; \
+            echo "  if [ -r \$script ] ; then"; \
+            echo "    . \$script"; \
+            echo "  fi"; \
+            echo "done"; \
             echo "nginx -g 'daemon on;'"; \
             echo "php-fpm7 -R -F"; \
         } | tee /run.sh \
