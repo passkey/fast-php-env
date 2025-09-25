@@ -19,7 +19,7 @@ LABEL maintainer="gengwh <8505569@qq.com>" version="1.0"
 
 RUN set -ex \
         # change apk source repo
-        && sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apk/repositories \
+        && sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
         && apk update \
         && apk add --no-cache php7-fpm php7-pcntl php7-opcache php7-session nginx \
         && apk del --purge *-dev \
